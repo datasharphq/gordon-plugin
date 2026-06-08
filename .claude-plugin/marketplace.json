@@ -1,0 +1,12 @@
+{
+  "name": "datasharp",
+  "owner": { "name": "Datasharp Engineering" },
+  "description": "Datasharp Claude Code plugins.",
+  "plugins": [
+    {
+      "name": "gordon",
+      "source": "./gordon-plugin",
+      "description": "Gordon — Datasharp's M&A pipeline copilot. Reads its live instructions from the M&A Agent Drive folder and acts on the pipeline via the gdrive + Linear MCP servers."
+    }
+  ]
+}
