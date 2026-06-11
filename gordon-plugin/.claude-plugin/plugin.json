@@ -1,6 +1,6 @@
 {
   "name": "gordon",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Gordon — Datasharp's M&A pipeline copilot. Loads its live operating instructions from the M&A Agent Drive folder and works the pipeline via the gdrive + Linear MCP servers. Run /gordon:gordon (or just ask Gordon to work the pipeline).",
   "author": { "name": "Datasharp Engineering" },
   "homepage": "https://gordon.datasharp.com",
