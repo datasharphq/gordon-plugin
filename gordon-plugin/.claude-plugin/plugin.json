@@ -1,6 +1,6 @@
 {
   "name": "gordon",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Gordon — Datasharp's M&A pipeline copilot. Works the pipeline in the Twenty CRM (single source of truth) and loads its live operating playbook from the CRM. Run /gordon:gordon (or just ask Gordon to work the pipeline).",
   "author": { "name": "Datasharp Engineering" },
   "homepage": "https://gordon.datasharp.com",
