@@ -2,7 +2,13 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "mcp__gdrive__(downloadFile|searchDriveFiles|readSpreadsheet|readDocument|createFile|updateFile|createDocument|replaceDocumentWithMarkdown|createSpreadsheet|writeSpreadsheet|appendRows)",
+        "matcher": "mcp__gordon-crm__(get_tool_catalog|learn_tools|list_object_metadata_names|list_skills)",
+        "hooks": [
+          { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/allow.sh\"" }
+        ]
+      },
+      {
+        "matcher": "mcp__gdrive__(downloadFile|searchDriveFiles|readSpreadsheet|readDocument)",
         "hooks": [
           { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/allow.sh\"" }
         ]

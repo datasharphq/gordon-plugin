@@ -1,40 +1,54 @@
 # Gordon — Claude Code plugin
 
 Run **Gordon**, Datasharp's M&A pipeline copilot, inside Claude Code. The `/gordon`
-skill reads its live operating instructions from the `M&A Agent` Google Drive folder
-through the bundled **gdrive** + **Linear** MCP servers — no separate CLI, launcher, or
-`cloudflared`.
+skill works the pipeline in the **Twenty CRM** (the single source of truth) and loads its
+live operating **playbook from the CRM** through the bundled **gordon-crm** MCP server —
+no separate CLI, launcher, or `cloudflared`.
 
 ## Install (per user, one-time)
 
 ```text
-/plugin marketplace add datasharphq/ds-gordon
+/plugin marketplace add datasharphq/gordon-plugin
 /plugin install gordon@datasharp
-/mcp        # authorize gdrive + Linear once (browser OAuth, as yourself)
+/mcp        # authorize gordon-crm + gdrive + Linear once (browser OAuth, as yourself)
 ```
 
 Then run `/gordon:gordon` (or just ask Gordon to work the pipeline). Updates: the
 maintainer bumps `version` in `.claude-plugin/plugin.json`; run `/plugin marketplace update`.
 
+## What it is
+
+The `/gordon` skill turns a Claude Code session into Gordon. On start it fetches its
+playbook (two `Gordon Playbook — …` notes) from the Twenty CRM, then works the pipeline:
+
+- **Pipeline, contacts, knowledge, and email all live in the Twenty CRM** (`companies`,
+  `people`, `notes`, `messages`). Nothing lives in Google Drive/Sheets.
+- **gdrive** is a utility only — for fetching external files an operator points you at
+  (e.g. a Gemini/meeting transcript). It is not the knowledge store.
+- **Linear** tracks pipeline work and email triage.
+
+Access to the data is gated by your own CRM / Google / Linear OAuth (user-scoped). The
+playbook and all M&A content live in the CRM (access-controlled) — not in this repo.
+
 ## Permissions
 
-The plugin ships a `PreToolUse` hook (`hooks/`) that **auto-approves non-destructive
-gdrive tools** so routine pipeline work doesn't prompt on every call:
+The plugin ships a `PreToolUse` hook (`hooks/`) that **auto-approves non-destructive,
+read-only tools** so routine pipeline work doesn't prompt on every call:
 
-- Auto-approved: `downloadFile`, `searchDriveFiles`, `readSpreadsheet`, `readDocument`,
-  `createFile`, `updateFile`, `createDocument`, `replaceDocumentWithMarkdown`,
-  `createSpreadsheet`, `writeSpreadsheet`, `appendRows`.
-- **Still prompt** (deliberately, not matched by the hook): `sendEmail`, `createDraft`,
-  `deleteFile`, and any tool not listed above (fail-safe). Linear tools also still prompt.
+- Auto-approved: the CRM discovery tools (`get_tool_catalog`, `learn_tools`,
+  `list_object_metadata_names`, `list_skills`) and read-only gdrive fetches
+  (`downloadFile`, `searchDriveFiles`, `readSpreadsheet`, `readDocument`).
+- **Still prompt** (deliberately): the CRM `execute_tool` (it performs both reads and
+  writes), every Linear tool, and any tool not listed above (fail-safe).
 
 This activates automatically for everyone who installs the plugin — no per-user settings
 edit. A hook `allow` can **never** override a permissions `deny`, so the next section can
-hard-block the dangerous tools without the hook getting in the way.
+hard-block dangerous tools without the hook getting in the way.
 
-### Optional: hard-block the dangerous tools org-wide
+### Optional: hard-block dangerous tools org-wide
 
-To make `sendEmail` / `createDraft` / `deleteFile` impossible (not just prompted) across
-the org, deploy a managed settings file via MDM. On macOS:
+To make destructive actions impossible (not just prompted) across the org, deploy a
+managed settings file via MDM. On macOS:
 `/Library/Application Support/ClaudeCode/managed-settings.json`
 
 ```json
@@ -50,11 +64,3 @@ the org, deploy a managed settings file via MDM. On macOS:
 ```
 
 Managed settings have the highest precedence and can't be overridden by users or hooks.
-
-## What it is
-
-The `/gordon` skill turns a Claude Code session into Gordon by loading its live operating
-instructions from a Google Drive folder via the bundled gdrive MCP server, then working the
-M&A pipeline (a Google Sheet) and knowledge base. The prompt's single source of truth lives
-in Drive (access-controlled) — it is not stored in this repo. Access to the data is gated by
-your own Google/Linear OAuth (user-scoped) and the Drive folder's sharing.
