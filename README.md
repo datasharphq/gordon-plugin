@@ -1,9 +1,10 @@
 # Gordon — Claude Code plugin
 
 Gordon is Datasharp's M&A pipeline copilot, packaged as a Claude Code plugin. It works
-the pipeline in **Attio** and loads its detailed workflow skills (pipeline, research,
-classification, outreach) **on demand from the Janus Studio** — the single source of
-truth, so nothing is bundled here and it can't drift from the live agent.
+the pipeline in **Attio** and **reads the data model live from Attio** (objects, fields,
+statuses, allowed values) rather than bundling a copy — so it can't drift from the
+workspace. The plugin carries only Gordon's behavior (workflows + email templates); the
+data dictionary always comes from Attio.
 
 ## Install
 
@@ -14,17 +15,8 @@ truth, so nothing is bundled here and it can't drift from the live agent.
 
 Then run `/mcp` once to authorize the **attio**, **gdrive**, and **Linear** MCP servers
 (browser OAuth, as yourself), and invoke with `/gordon:gordon` — or just ask Gordon to
-work the pipeline.
-
-Gordon fetches its workflow skills from the studio at runtime, authenticated with your
-studio session, so set it once per session:
-
-```bash
-export JANUS_SESSION=<your janus_session cookie value from https://janus.datasharp.com>
-```
-
-(Sign in to the studio in your browser, then copy the `janus_session` cookie via DevTools
-→ Application → Cookies. It's short-lived — re-copy if a fetch returns 401.)
+work the pipeline. No tokens or env vars to set: Gordon discovers the pipeline model
+through the `attio` connection you authorized.
 
 See [`gordon-plugin/README.md`](gordon-plugin/README.md) for permissions, the
 auto-approve hook, and org-wide settings.
