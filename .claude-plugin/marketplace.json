@@ -6,7 +6,7 @@
     {
       "name": "gordon",
       "source": "./gordon-plugin",
-      "description": "Gordon — Datasharp's M&A pipeline copilot. Works the pipeline in the Twenty CRM (single source of truth) and loads its live playbook from the CRM; Linear for work tracking, gdrive as a file-fetch utility."
+      "description": "Gordon — Datasharp's M&A pipeline copilot. Works the pipeline in Attio (the operator's own connected account, single source of truth) with on-demand skills for pipeline, research, classification, and outreach; Linear for work tracking, gdrive as a file-fetch utility."
     }
   ]
 }
