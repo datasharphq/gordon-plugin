@@ -1,6 +1,6 @@
 {
   "name": "gordon",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Gordon — Datasharp's M&A pipeline copilot. Works the pipeline in Attio (your own connected account, single source of truth) with on-demand skills for pipeline, research, classification, and outreach. Run /gordon:gordon (or just ask Gordon to work the pipeline).",
   "author": { "name": "Datasharp Engineering" },
   "homepage": "https://gordon.datasharp.com",

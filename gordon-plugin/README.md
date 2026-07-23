@@ -1,16 +1,17 @@
 # Gordon — Claude Code plugin
 
 Run **Gordon**, Datasharp's M&A pipeline copilot, inside Claude Code. The `/gordon`
-skill works the pipeline in the **Twenty CRM** (the single source of truth) and loads its
-live operating **playbook from the CRM** through the bundled **gordon-crm** MCP server —
-no separate CLI, launcher, or `cloudflared`.
+skill works the pipeline in **Attio** (your own connected account, the single source of
+truth) and **reads the data model live from Attio** — objects, attribute slugs, and the
+current select/status option titles — so the data dictionary is never hardcoded. No
+separate CLI, launcher, or `cloudflared`.
 
 ## Install (per user, one-time)
 
 ```text
 /plugin marketplace add datasharphq/gordon-plugin
 /plugin install gordon@datasharp
-/mcp        # authorize gordon-crm + gdrive + Linear once (browser OAuth, as yourself)
+/mcp        # authorize attio + gdrive + Linear once (browser OAuth, as yourself)
 ```
 
 Then run `/gordon:gordon` (or just ask Gordon to work the pipeline). Updates: the
@@ -18,28 +19,34 @@ maintainer bumps `version` in `.claude-plugin/plugin.json`; run `/plugin marketp
 
 ## What it is
 
-The `/gordon` skill turns a Claude Code session into Gordon. On start it fetches its
-playbook (two `Gordon Playbook — …` notes) from the Twenty CRM, then works the pipeline:
+The `/gordon` skill turns a Claude Code session into Gordon. It discovers the model from
+Attio (`list-attribute-definitions` on `ma_deal` + `companies`), then works the pipeline:
 
-- **Pipeline, contacts, knowledge, and email all live in the Twenty CRM** (`companies`,
-  `people`, `notes`, `messages`). Nothing lives in Google Drive/Sheets.
+- **Pipeline, contacts, knowledge, and email all live in Attio** — `ma_deal` (one record
+  per target, the lifecycle `pipeline_status` + fit/outreach fields), `companies` (the
+  entity master + classification), `people` (contacts), and **notes** attached to the
+  `ma_deal` record (the knowledge base). Nothing lives in Google Drive/Sheets.
 - **gdrive** is a utility only — for fetching external files an operator points you at
   (e.g. a Gemini/meeting transcript). It is not the knowledge store.
 - **Linear** tracks pipeline work and email triage.
 
-Access to the data is gated by your own CRM / Google / Linear OAuth (user-scoped). The
-playbook and all M&A content live in the CRM (access-controlled) — not in this repo.
+Access to the data is gated by your own Attio / Google / Linear OAuth (user-scoped) —
+these are your accounts, not a shared mailbox. All M&A content lives in Attio
+(access-controlled), not in this repo.
 
 ## Permissions
 
 The plugin ships a `PreToolUse` hook (`hooks/`) that **auto-approves non-destructive,
 read-only tools** so routine pipeline work doesn't prompt on every call:
 
-- Auto-approved: the CRM discovery tools (`get_tool_catalog`, `learn_tools`,
-  `list_object_metadata_names`, `list_skills`) and read-only gdrive fetches
-  (`downloadFile`, `searchDriveFiles`, `readSpreadsheet`, `readDocument`).
-- **Still prompt** (deliberately): the CRM `execute_tool` (it performs both reads and
-  writes), every Linear tool, and any tool not listed above (fail-safe).
+- Auto-approved: Attio's read-only tools (`list-attribute-definitions`,
+  `list-list-attribute-definitions`, `list-lists`, `search-records`, `list-records`,
+  `list-records-in-list`, `get-records-by-ids`, `search-notes-by-metadata`,
+  `get-note-body`, `search-emails-by-metadata`, `get-email-content`) and read-only gdrive
+  fetches (`downloadFile`, `searchDriveFiles`, `readSpreadsheet`, `readDocument`).
+- **Still prompt** (deliberately): every Attio write (`create-record`, `update-record`,
+  `upsert-record`, `create-note`, …), every Linear tool, and any tool not listed above
+  (fail-safe).
 
 This activates automatically for everyone who installs the plugin — no per-user settings
 edit. A hook `allow` can **never** override a permissions `deny`, so the next section can

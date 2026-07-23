@@ -2,7 +2,7 @@
   "hooks": {
     "PreToolUse": [
       {
-        "matcher": "mcp__gordon-crm__(get_tool_catalog|learn_tools|list_object_metadata_names|list_skills)",
+        "matcher": "mcp__attio__(list-attribute-definitions|list-list-attribute-definitions|list-lists|search-records|list-records|list-records-in-list|get-records-by-ids|search-notes-by-metadata|get-note-body|search-emails-by-metadata|get-email-content)",
         "hooks": [
           { "type": "command", "command": "sh \"${CLAUDE_PLUGIN_ROOT}/hooks/allow.sh\"" }
         ]

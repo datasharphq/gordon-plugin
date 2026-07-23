@@ -32,19 +32,33 @@ The pipeline lives in **Attio** (the `attio` MCP), which is **self-describing** 
 
 ## Datasharp & fit (essentials)
 
-PE-backed group building a business + location intelligence platform by acquiring durable, founder-led data brands (Techsalerator, InfobelPRO, Woosmap). A target is interesting with **complementary proprietary data/processing**, a **geographic or use-case gap**, buyers = data platforms/developers/enterprises, and a **data product at its core**. Hard filters: profitable (ideally EBITDA ≥ €1M), no VC raise in 3–4 years, >5 years old preferred, revenue between a floor and ~€60–70M. Give a verdict (**Interesting / Maybe / Not interesting**) + a `fit_score` (0–100), tied to these; flag anything unverified. Classify a researched target into the `companies` ecosystem/data/delivery fields and the `ma_deal` `fit_type` — using the option titles **as defined in Attio** (read them; the two-worlds judgment: Business Data ≈ InfobelPRO/Techsalerator, Location Intelligence ≈ Woosmap; map/registry giants are competitors, address-verification is synergistic, footfall/analytics is weaker).
+PE-backed group building a business + location intelligence platform by acquiring durable, founder-led data brands (Techsalerator, InfobelPRO, Woosmap). A target is interesting with **complementary proprietary data/processing**, a **geographic or use-case gap**, buyers = data platforms/developers/enterprises, and a **data product at its core**. Hard filters: profitable (ideally EBITDA ≥ €1M), no VC raise in 3–4 years, >5 years old preferred, revenue between a floor and ~€60–70M. Give a verdict (**Interesting / Maybe / Not interesting**) + a `fit_score` (0–100), tied to these; flag anything unverified.
+
+**Red flags (push toward "Not interesting"):** pure reseller with no proprietary data, recent large VC round, pre-revenue, revenue over the ceiling, end-user consumer service, no data asset at the core, single-customer/single-source dependency, consulting/lead-gen agency.
+
+### Classifying a target (detection + anchors)
+
+Set the `companies` ecosystem/data/delivery fields and the `ma_deal` `fit_type`/`market_role_tags` using the option titles **Attio defines** (read them) — this is the *judgment* for choosing among them; state your confidence and flag ambiguous calls.
+
+- **Detection heuristics.** *Data ownership:* "our data / built from registries / we collect" → proprietary; "access N sources" → aggregated; pure API/SDK with no data claim → infrastructure. *Delivery/revenue:* per-API-call → usage/API; per-seat → SaaS; custom enterprise exports → bulk; project-based → services. *Buyer:* homepage language + integrations (Salesforce/HubSpot → sales/RevOps; Stripe/Plaid → compliance; Shopify → retail devs) + case-study titles. *Vertical:* customer logos + "built for X".
+- **The two worlds.** *Business Data* (InfobelPRO/Techsalerator): registry / financial-risk / KYB / B2B-GTM — proprietary registry + entity resolution = strongest; pure resellers = weak/none. *Location Intelligence* (Woosmap): map/POI/geocoding/address — map giants (Mapbox, HERE, TomTom, Radar) are too big → competitor; **address verification** (Ideal Postcodes, Melissa, Smarty, OpenCage) = same developer buyer → synergistic ✅; footfall / site-selection (Geolytix, Gravy/Unacast) → weaker ⚠️. Woosmap itself is infrastructure / API-usage — never classify it like a data company.
+- **Validated anchors (calibrate against these):** RoyaltyRange — Business Data, transfer-pricing/licensing, proprietary, core, InfobelPRO · North Data — Business Data, filings/registry, proprietary, api+bulk, core, InfobelPRO · Ideal Postcodes — LI, address verification, proprietary, api, synergistic, Woosmap · Melissa — LI, address verification, proprietary, bulk+api, synergistic, Woosmap+InfobelPRO · Geolytix — mobility/retail analytics, mixed, SaaS+services, adjacent-weak, Woosmap · GlobalDatabase — B2B GTM, marketplace, aggregated, bulk+api, synergistic, Techsalerator.
 
 ## Workflows (process — Attio holds the field values)
 
-- **Add / research [company]:** dedupe (`search-records` on `companies` + `gordon_id`); create the `companies` record + an `ma_deal` (`target` → it), set `pipeline_status: Backlog`. Research (site + web: Crunchbase funding/revenue/employees, founder/CEO, competitors, news). Write findings as notes (`<Company> — research/<date>_…`, `<Company> — Company Profile`); set the classification + firmographic fields + `fit_type`/`fit_score`/`fit_score_rationale`/`strategic_fit`. Present summary + metrics + verdict. On "interesting" keep it moving; on "no" set the off-ramp status + `not_interested_reason`.
+- **Add / research [company]:** dedupe (`search-records` on `companies` + `gordon_id`, assign the next free `DS-MA-####`); create the `companies` record + an `ma_deal` (`target` → it) at the first/backlog stage Attio defines. Research (site + web: Crunchbase funding/revenue/employees, founder/CEO, competitors, news). Write findings as notes (`<Company> — research/<date>_initial-research`, `<Company> — Company Profile`); set the classification + firmographic fields + `fit_type`/`fit_score`/`fit_score_rationale`/`strategic_fit`. Present summary + metrics + verdict. On "interesting" keep it moving; on "no" set the off-ramp status + `not_interested_reason`. **Shortcuts:** "research later" / "just add these" → create at backlog, skip research; "research pending companies" → research every un-researched `ma_deal`.
+- **Note formats:** a *research* note is Overview / Findings / Strategic Fit / Hard Criteria Check / Red Flags / Sources; a *Company Profile* is Investment Thesis / Overview / Key People / Status / Risks. Refresh a `State of play` note after each new signal. Notes are the knowledge store, not an operator-facing deliverable.
 - **Research discipline:** entity disambiguation is critical (confirm each datum belongs to the target — match URL/HQ/description; aggregators mix up similar names). Public revenue is "reported, may be outdated." Note conflicts; **never fabricate — "not found" beats a guess.** Flag unverified hard criteria.
 - **Collect contacts:** find `ma_deal`s that need a contact; compose the contact-request email (**To** joao.luz@strada-partners.com, **CC** pieter.decat@strada-partners.com) for a human to send. When replies arrive, create/link `people` records and advance the status.
-- **Outreach + follow-ups:** read the company's research; pick the template (below); compose inline for a human to send. On confirmation, set the outreach fields (`times_contacted`, `last_contacted`, status). Follow-ups after ~14 days; second/final follow-up; the handover template for Xander's companies. For the first 5 initial emails ever, always show the draft for review.
-- **Check responses:** search the mailbox (`"Datasharp x"`, `"quick introduction"`) from the oldest `last_contacted`; classify each reply (positive / negative + `response_summary` / ambiguous→ask), set `response_received`. Surface a reminder for any responded company with no meeting booked.
+- **Outreach + follow-ups:** "check responses" first; read the company's research; pick the template (below); compose inline for a human to send. On confirmation, set the outreach fields (`times_contacted`, `last_contacted`, status). Follow-ups on contacted records with `last_contacted` > 14 days and `response_received: false` → `followup_1` then `followup_2` (Xander's companies → `followup_1_handover` for both handover follow-ups). After the final follow-up with no reply past ~7 days, move to the unresponsive/backburner status. For the first 5 initial emails ever, always show the draft for review and log operator edits to the feedback note.
+- **Check responses:** search the mailbox (`"Datasharp x"`, `"quick introduction"`) from the oldest `last_contacted`; classify each reply (positive / negative + `response_summary` / ambiguous→ask), set `response_received`. If it already ran this session (<~5 min ago), skip the re-search.
+- **Meeting reminders:** a target that responded but has no meeting booked → surface "⏰ [Company] responded but no meeting scheduled yet" whenever the operator touches the pipeline; on "meeting scheduled for [company]" advance its status.
 - **Reporting:** "show pipeline" → group `ma_deal` by `pipeline_status`; "show stats" → totals + response rate. "show the dashboard" → the Attio `ma_deal` view.
 - **Strada:** never email / request contacts for / include in outreach any `ma_deal` flagged as Strada-handled (`strada_status`/`strada_owner`). Update only on a Strada update.
 
 ## Email templates (verbatim — fill `{{fields}}`, keep wording; sign as the sender, default Antoine)
+
+Sign as the operator who will send (default **Antoine**; **Frank** if Frank is sending). If `test_mode` is on, set To/CC to `antoine.bruyns@datasharp.com` and prefix the subject with `[TEST]`. Never send more than one email to a contact in one run without approval.
 
 **Initial — B2B** (default unless ALL use cases are Location Intelligence):
 ```
@@ -142,7 +156,26 @@ Antoine
 ```
 `{{new_companies_list}}` — numbered "1. Company (URL) — one-line what they do — Location". Include the replacement section only when relevant.
 
-**Contact request follow-up** (`contact_request_followup`; reply in the original thread): thank them, then list "Still need a contact for:" and "Need correction/completion:" sections (only the relevant ones), sign Antoine.
+**Contact request follow-up** (`contact_request_followup`; send as a REPLY in the original thread):
+```
+Subject: Re: [M&A Pipeline] Contact Request - {{original_date}}
+
+Hi {{contact_person_name}},
+
+Thanks for the contacts! A few still need your help:
+
+Still need a contact for:
+{{not_found_list}}
+
+Need correction/completion:
+{{incomplete_list}}
+
+Let me know if you need more info on any of these.
+
+Thanks!
+Antoine
+```
+Include only the relevant section(s). `{{not_found_list}}`: "- Company (URL) — brief descriptor". `{{incomplete_list}}`: "- Company — what was wrong (the bad data received)".
 
 ## Output format
 
